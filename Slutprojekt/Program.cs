@@ -1,33 +1,41 @@
-﻿// skapar alla variabler som används i spelet
-Building farm = new Building() {name = "Farm"};
-Building carpentry = new Building() {name = "Carpentry"};
-List<Building> buildqueue = [farm, carpentry];
-
-Resource food = new Resource() {name = "Food"};
-Resource wood = new Resource() {name = "Wood"};
+﻿// skapar variabler som används i spelet
+// jag använder listor istället för arrayer då jag vill att programmet lägger till objekt under programmets gång
+Resource food = new Resource() { name = "Food" };
+Resource wood = new Resource() { name = "Wood" };
 List<Resource> resources = [food, wood];
+
+Building farm = new Building() { name = "Farm", productionAmount = 1, productionResource = food };
+Building carpentry = new Building() { name = "Carpentry", productionAmount = 1, productionResource = wood };
+List<Building> buildqueue = [farm, carpentry];
 
 List<string> people = [];
 
-Building cityCenter = new Building() {name = "City Center"};
-List<Building> buildings = [cityCenter];
+List<Building> buildings = [farm, carpentry];
 
 string cityname = Toolbox.Intro(people);
+int day = 1;
 
 while (true)
 {
     // skriver upp display
+    Console.Clear();
     Console.Clear();
 
     Console.WriteLine(cityname + "\n");
     Toolbox.DisplayBuildqueue(buildqueue);
 
     Console.WriteLine();
-    Toolbox.DisplayResources(resources, people);
+    Toolbox.DisplayResources(resources, people, day);
 
     Console.WriteLine();
     Toolbox.DisplayWork(people, buildings);
 
     // spelaren får möjlighet att byta vilken byggnad som byggs
-    bool pass = Toolbox.SwitchBuilding(buildqueue);
+    if (Toolbox.SwitchBuilding(buildqueue))
+    {
+        day++;
+        Toolbox.Produce(resources, buildings);
+        Toolbox.BuildingWork(wood, people, buildings, buildqueue);
+        Toolbox.PopulationGrowth(food, people);
+    }
 }
