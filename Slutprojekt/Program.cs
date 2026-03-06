@@ -19,7 +19,6 @@ while (true)
 {
     // skriver upp display
     Console.Clear();
-    Console.Clear();
 
     Console.WriteLine(cityname + "\n");
     Toolbox.DisplayBuildqueue(buildqueue);
@@ -34,8 +33,8 @@ while (true)
     if (Toolbox.SwitchBuilding(buildqueue))
     {
         day++;
-        Toolbox.Produce(resources, buildings);
         Toolbox.BuildingWork(wood, people, buildings, buildqueue);
+        Toolbox.Produce(resources, buildings);
         Toolbox.PopulationGrowth(food, people);
     }
 }

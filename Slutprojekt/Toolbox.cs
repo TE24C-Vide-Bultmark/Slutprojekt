@@ -27,7 +27,7 @@ public class Toolbox
         int iteration = 1;
         while(iteration < buildqueue.Count)
         {
-            Console.WriteLine(iteration + ") " + buildqueue[iteration].name);
+            Console.WriteLine($"{iteration}) {buildqueue[iteration].name} ({buildqueue[iteration].progress}/{buildqueue[iteration].cost})");
             iteration++;
         }
         
@@ -41,7 +41,7 @@ public class Toolbox
     public static void DisplayResources(List<Resource> resources, List<string> people, int day)
     {
         Console.WriteLine("day " + day);
-        Console.WriteLine("food needed until next person: " + 3*people.Count);
+        Console.WriteLine("food needed until next person: " + people.Count*people.Count);
         int iteration = 0;
         while (iteration < resources.Count)
         {
@@ -95,20 +95,24 @@ public class Toolbox
 
     public static void Produce(List<Resource> resources, List<Building> buildings)
     {
-        // spelet uppdaterar stadens resurser
+        // loop som går igenom varje resurs
         int iterationResource = 0;
         while (iterationResource < resources.Count)
         {
+            // nollställer produktionen
+            resources[iterationResource].production = 0;
             int iterationBuilding = 0;
             while (iterationBuilding < buildings.Count)
             {
-                // kollar efter byggnader som producerar food och ökar food med så mycket byggnaden producerar
+                // kollar efter byggnader som producerar en viss resurs och ökar produktionen av den resursen med så mycket byggnaden producerar
                 if (buildings[iterationBuilding].productionResource == resources[iterationResource])
                 {
-                    resources[iterationResource].amount += buildings[iterationBuilding].productionAmount;
+                    resources[iterationResource].production += buildings[iterationBuilding].productionAmount;
                 }
                 iterationBuilding++;
             }
+            // ökar antalet resurser med produktion
+            resources[iterationResource].amount += resources[iterationResource].production;
             iterationResource++;
         }
     }
@@ -120,13 +124,18 @@ public class Toolbox
     public static void PopulationGrowth(Resource food, List<string> people)
     {
         // ökar population
-        if (food.amount >= people.Count*3)
+        if (food.amount >= people.Count*people.Count)
         {
             food.amount=0;
             Console.Clear();
             Console.WriteLine("congratulations your a new member of your city has appeared!");
-            Console.WriteLine("please choose a name for the member");
-            people.Add(Console.ReadLine());
+            string name = "";
+            while (name.Length < 1 || name.Length > 20)
+            {
+            Console.WriteLine("please choose a name for the member. Name must be between 1 and 20 characters");
+            name = Console.ReadLine();
+            }
+            people.Add(name);
         }
     }
 
@@ -145,6 +154,11 @@ public class Toolbox
         {
             buildqueue[0].progress += wood.amount;
             wood.amount = 0;
+        }
+        if (buildqueue[0].progress >= buildqueue[0].cost)
+        {
+            buildqueue[0].progress = 0;
+            buildings.Add(buildqueue[0]);
         }
     }
 }
