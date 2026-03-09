@@ -23,14 +23,14 @@ public class Toolbox
     public static void DisplayBuildqueue(List<Building> buildqueue)
     {
         Console.WriteLine($"building - {buildqueue[0].name} ({buildqueue[0].progress}/{buildqueue[0].cost})");
-        
+
         int iteration = 1;
-        while(iteration < buildqueue.Count)
+        while (iteration < buildqueue.Count)
         {
             Console.WriteLine($"{iteration}) {buildqueue[iteration].name} ({buildqueue[iteration].progress}/{buildqueue[iteration].cost})");
             iteration++;
         }
-        
+
     }
 
 
@@ -41,7 +41,7 @@ public class Toolbox
     public static void DisplayResources(List<Resource> resources, List<string> people, int day)
     {
         Console.WriteLine("day " + day);
-        Console.WriteLine("food needed until next person: " + people.Count*people.Count);
+        Console.WriteLine("food needed until next person: " + people.Count * people.Count);
         int iteration = 0;
         while (iteration < resources.Count)
         {
@@ -57,15 +57,18 @@ public class Toolbox
     // skriver upp personer och arbetsuppgifter
     public static void DisplayWork(List<string> people, List<Building> buildings)
     {
-        int iteration = people.Count-1;
-        while (iteration >= buildings.Count)
-        {
-            Console.WriteLine(people[iteration] + " - building");
-            iteration--;
-        }
+        int iteration = people.Count - 1;
         while (iteration >= 0)
         {
-            Console.WriteLine(people[iteration] + " - " + buildings[iteration].name);
+            Console.Write(people[iteration]);
+            if (iteration >= buildings.Count)
+            {
+                Console.WriteLine(" - building");
+            }
+            else
+            {
+                Console.WriteLine(" - " + buildings[iteration].name);
+            }
             iteration--;
         }
     }
@@ -81,10 +84,10 @@ public class Toolbox
         int.TryParse(Console.ReadLine(), out input);
         if (buildqueue.Count > input && input > 0)
         {
-        Building temp = buildqueue[input]; 
-        buildqueue[input] = buildqueue[0];
-        buildqueue[0] = temp;  
-        return false;    
+            Building temp = buildqueue[input];
+            buildqueue[input] = buildqueue[0];
+            buildqueue[0] = temp;
+            return false;
         }
         else return true;
     }
@@ -93,7 +96,7 @@ public class Toolbox
 
 
 
-    public static void Produce(List<Resource> resources, List<Building> buildings)
+    public static void Produce(List<Resource> resources, List<Building> buildings, Resource food, List<string> people)
     {
         // loop som går igenom varje resurs
         int iterationResource = 0;
@@ -111,6 +114,11 @@ public class Toolbox
                 }
                 iterationBuilding++;
             }
+            if (resources[iterationResource] == food)
+            {
+                // minskar mat med antalet personer
+                food.production -= people.Count;
+            }
             // ökar antalet resurser med produktion
             resources[iterationResource].amount += resources[iterationResource].production;
             iterationResource++;
@@ -124,16 +132,16 @@ public class Toolbox
     public static void PopulationGrowth(Resource food, List<string> people)
     {
         // ökar population
-        if (food.amount >= people.Count*people.Count)
+        if (food.amount >= people.Count * people.Count)
         {
-            food.amount=0;
+            food.amount = 0;
             Console.Clear();
             Console.WriteLine("congratulations your a new member of your city has appeared!");
             string name = "";
             while (name.Length < 1 || name.Length > 20)
             {
-            Console.WriteLine("please choose a name for the member. Name must be between 1 and 20 characters");
-            name = Console.ReadLine();
+                Console.WriteLine("please choose a name for the member. Name must be between 1 and 20 characters");
+                name = Console.ReadLine();
             }
             people.Add(name);
         }
@@ -142,15 +150,16 @@ public class Toolbox
 
 
 
+
     public static void BuildingWork(Resource wood, List<string> people, List<Building> buildings, List<Building> buildqueue)
     {
         // bygger på byggnad
-        if (wood.amount > people.Count-buildings.Count)
+        if (wood.amount > people.Count - buildings.Count)
         {
-        buildqueue[0].progress += people.Count-buildings.Count;
-        wood.amount -= people.Count-buildings.Count;
+            buildqueue[0].progress += people.Count - buildings.Count;
+            wood.amount -= people.Count - buildings.Count;
         }
-        else 
+        else
         {
             buildqueue[0].progress += wood.amount;
             wood.amount = 0;

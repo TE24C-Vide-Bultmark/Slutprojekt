@@ -1,12 +1,12 @@
 ﻿// skapar variabler som används i spelet
-// jag använder listor istället för arrayer då jag vill att programmet lägger till objekt under programmets gång
+// jag använder listor istället för arrayer då jag vill att programmet ska kunna lägga till objekt i de under programmets gång, detta gäller för alla listor i programmet
 Resource food = new Resource() { name = "Food" };
 Resource wood = new Resource() { name = "Wood" };
 List<Resource> resources = [food, wood];
 
-Building farm = new Building() { name = "Farm", productionAmount = 1, productionResource = food };
+Building farm = new Building() { name = "Farm", productionAmount = 3, productionResource = food };
 Building carpentry = new Building() { name = "Carpentry", productionAmount = 1, productionResource = wood };
-List<Building> buildqueue = [farm, carpentry];
+List<Building> buildingOptions = [farm, carpentry];
 
 List<string> people = [];
 
@@ -21,7 +21,7 @@ while (true)
     Console.Clear();
 
     Console.WriteLine(cityname + "\n");
-    Toolbox.DisplayBuildqueue(buildqueue);
+    Toolbox.DisplayBuildqueue(buildingOptions);
 
     Console.WriteLine();
     Toolbox.DisplayResources(resources, people, day);
@@ -30,11 +30,11 @@ while (true)
     Toolbox.DisplayWork(people, buildings);
 
     // spelaren får möjlighet att byta vilken byggnad som byggs
-    if (Toolbox.SwitchBuilding(buildqueue))
+    if (Toolbox.SwitchBuilding(buildingOptions))
     {
         day++;
-        Toolbox.BuildingWork(wood, people, buildings, buildqueue);
-        Toolbox.Produce(resources, buildings);
+        Toolbox.BuildingWork(wood, people, buildings, buildingOptions);
+        Toolbox.Produce(resources, buildings, food, people);
         Toolbox.PopulationGrowth(food, people);
     }
 }
