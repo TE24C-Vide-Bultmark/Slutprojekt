@@ -2,7 +2,8 @@
 // jag använder listor istället för arrayer då jag vill att programmet ska kunna lägga till objekt i de under programmets gång, detta gäller för alla listor i programmet
 Resource food = new Resource() { name = "Food" };
 Resource wood = new Resource() { name = "Wood" };
-List<Resource> resources = [food, wood];
+Resource science = new Resource() { name = "Science"};
+List<Resource> resources = [food, wood, science];
 
 Building farm = new Building() { name = "Farm", productionAmount = 3, productionResource = food };
 Building carpentry = new Building() { name = "Carpentry", productionAmount = 1, productionResource = wood };
@@ -34,7 +35,7 @@ while (true)
     {
         day++;
         Toolbox.BuildingWork(wood, people, buildings, buildingOptions);
-        Toolbox.Produce(resources, buildings, food, people);
+        Toolbox.Produce(resources, buildings, people);
         Toolbox.PopulationGrowth(food, people);
     }
 }

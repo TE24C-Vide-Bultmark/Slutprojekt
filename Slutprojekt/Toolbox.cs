@@ -10,7 +10,9 @@ public class Toolbox
         Console.WriteLine("Please choose a name for your city.");
         string cityname = Console.ReadLine();
         Console.WriteLine($"And who are the two founders of {cityname}?");
+        Console.Write("Farmer: ");
         people.Add(Console.ReadLine());
+        Console.Write("Carpenter: ");
         people.Add(Console.ReadLine());
         return cityname;
     }
@@ -96,7 +98,7 @@ public class Toolbox
 
 
 
-    public static void Produce(List<Resource> resources, List<Building> buildings, Resource food, List<string> people)
+    public static void Produce(List<Resource> resources, List<Building> buildings, List<string> people)
     {
         // loop som går igenom varje resurs
         int iterationResource = 0;
@@ -114,7 +116,9 @@ public class Toolbox
             }
             iterationResource++;
         }
-        food.amount -= people.Count;
+        // produktion ej baserat på byggnader
+        resources[0].amount -= people.Count;
+        resources[2].amount += people.Count;
     }
 
 
