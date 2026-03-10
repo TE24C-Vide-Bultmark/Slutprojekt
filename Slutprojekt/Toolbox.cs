@@ -45,7 +45,7 @@ public class Toolbox
         int iteration = 0;
         while (iteration < resources.Count)
         {
-            Console.WriteLine(resources[iteration].name + ": " + resources[iteration].amount + " (" + resources[iteration].production + ")");
+            Console.WriteLine(resources[iteration].name + ": " + resources[iteration].amount);
             iteration++;
         }
     }
@@ -102,27 +102,19 @@ public class Toolbox
         int iterationResource = 0;
         while (iterationResource < resources.Count)
         {
-            // nollställer produktionen
-            resources[iterationResource].production = 0;
             int iterationBuilding = 0;
             while (iterationBuilding < buildings.Count)
             {
                 // kollar efter byggnader som producerar en viss resurs och ökar produktionen av den resursen med så mycket byggnaden producerar
                 if (buildings[iterationBuilding].productionResource == resources[iterationResource])
                 {
-                    resources[iterationResource].production += buildings[iterationBuilding].productionAmount;
+                    resources[iterationResource].amount += buildings[iterationBuilding].productionAmount;
                 }
                 iterationBuilding++;
             }
-            if (resources[iterationResource] == food)
-            {
-                // minskar mat med antalet personer
-                food.production -= people.Count;
-            }
-            // ökar antalet resurser med produktion
-            resources[iterationResource].amount += resources[iterationResource].production;
             iterationResource++;
         }
+        food.amount -= people.Count;
     }
 
 
