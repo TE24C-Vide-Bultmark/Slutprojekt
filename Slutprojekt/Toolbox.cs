@@ -25,12 +25,12 @@ public class Toolbox
     // skriver upp namn på staden och de byggnader du kan bygga
     public static void DisplayBuildqueue(List<Building> buildqueue)
     {
-        Console.WriteLine($"building - {buildqueue[0].name} ({buildqueue[0].progress}/{buildqueue[0].cost})");
+        Console.WriteLine($"building - {buildqueue[0].name} ({buildqueue[0].progress}/{buildqueue[0].costAmount} {buildqueue[0].costResource.name})");
 
         int iteration = 1;
         while (iteration < buildqueue.Count)
         {
-            Console.WriteLine($"{iteration}) {buildqueue[iteration].name} ({buildqueue[iteration].progress}/{buildqueue[iteration].cost})");
+            Console.WriteLine($"{iteration}) {buildqueue[iteration].name} ({buildqueue[iteration].progress}/{buildqueue[iteration].costAmount} {buildqueue[iteration].costResource.name})");
             iteration++;
         }
 
@@ -148,20 +148,21 @@ public class Toolbox
 
 
 
-    public static void BuildingWork(Resource wood, List<string> people, List<Building> buildings, List<Building> buildqueue)
+    public static void BuildingWork(List<string> people, List<Building> buildings, List<Building> buildqueue)
     {
         // bygger på byggnad
-        if (wood.amount > people.Count - buildings.Count)
+        if (buildqueue[0].costResource.amount > people.Count - buildings.Count)
         {
             buildqueue[0].progress += people.Count - buildings.Count;
-            wood.amount -= people.Count - buildings.Count;
+            buildqueue[0].costResource.amount -= people.Count - buildings.Count;
         }
         else
         {
-            buildqueue[0].progress += wood.amount;
-            wood.amount = 0;
+            buildqueue[0].progress += buildqueue[0].costResource.amount;
+            buildqueue[0].costResource.amount = 0;
         }
-        if (buildqueue[0].progress >= buildqueue[0].cost)
+        // lägger till byggnaden om den är färdig
+        if (buildqueue[0].progress >= buildqueue[0].costAmount)
         {
             buildqueue[0].progress = 0;
             buildings.Add(buildqueue[0]);
