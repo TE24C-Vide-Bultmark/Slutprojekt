@@ -173,7 +173,7 @@ public class Toolbox
 
 
 
-    public static int Research(List<Building> techOptions, List<Building> technologies, List<Building> buildingOptions, Resource science)
+    public static void Research(List<Building> techOptions, List<Building> technologies, List<Building> buildingOptions, Resource science, List<Resource> resources)
     {
         techOptions = [];
         Console.Clear();
@@ -193,7 +193,7 @@ public class Toolbox
         }
         buildingOptions.Add(techOptions[choice - 1]);
         science.amount = 0;
-        return choice;
+        AddResource(resources, techOptions, choice);
     }
 
 
@@ -205,9 +205,6 @@ public class Toolbox
         int itertion = 0;
         while (itertion < resources.Count)
         {
-            Console.WriteLine("iteration: " + itertion);
-            Console.WriteLine("choice-1: " + choice);
-            Console.ReadLine();
             if (resources[itertion] == techOptions[choice - 1].productionResource)
             {
                 break;

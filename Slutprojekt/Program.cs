@@ -51,8 +51,7 @@ while (true)
         // om spelaren har tillräckligt med forskning får de välja mellan 2 nya teknologier
         if (science.amount >= 50 && technologies.Count > 1)
         {
-            int choice = Toolbox.Research(techOptions, technologies, buildingOptions, science);
-            Toolbox.AddResource(resources, techOptions, choice);
+            Toolbox.Research(techOptions, technologies, buildingOptions, science, resources);
         }
     }
 }
