@@ -168,4 +168,55 @@ public class Toolbox
             buildings.Add(buildqueue[0]);
         }
     }
+
+
+
+
+
+    public static int Research(List<Building> techOptions, List<Building> technologies, List<Building> buildingOptions, Resource science)
+    {
+        techOptions = [];
+        Console.Clear();
+        Console.WriteLine("Congartualions your city discovered a new technology!");
+        for (int i = 0; i < 2; i++)
+        {
+            int random = Random.Shared.Next(technologies.Count);
+            techOptions.Add(technologies[random]);
+            technologies.RemoveAt(random);
+            Console.WriteLine(i + 1 + ") " + techOptions[i].name);
+        }
+        int choice = 0;
+        while (choice < 1 || choice > techOptions.Count)
+        {
+            Console.WriteLine("Enter the number to the left of the tech you want to research");
+            int.TryParse(Console.ReadLine(), out choice);
+        }
+        buildingOptions.Add(techOptions[choice - 1]);
+        science.amount = 0;
+        return choice;
+    }
+
+
+
+
+
+    public static void AddResource(List<Resource> resources, List<Building> techOptions, int choice)
+    {
+        int itertion = 0;
+        while (itertion < resources.Count)
+        {
+            Console.WriteLine("iteration: " + itertion);
+            Console.WriteLine("choice-1: " + choice);
+            Console.ReadLine();
+            if (resources[itertion] == techOptions[choice - 1].productionResource)
+            {
+                break;
+            }
+            else if (itertion == resources.Count - 1)
+            {
+                resources.Add(techOptions[choice - 1].productionResource);
+            }
+            itertion++;
+        }
+    }
 }
