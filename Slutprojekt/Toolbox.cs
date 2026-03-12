@@ -1,6 +1,3 @@
-using System.Runtime.Versioning;
-using System.Xml;
-
 public class Toolbox
 {
     // introducerar spelet och låter spelaren namnge staden samt grundaren

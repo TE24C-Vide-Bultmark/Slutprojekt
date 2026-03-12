@@ -2,8 +2,6 @@
 // jag använder listor istället för arrayer då jag vill att programmet ska kunna lägga till objekt i de under programmets gång, detta gäller för alla listor i programmet
 
 // resurserna i spelet
-using System.Xml.Serialization;
-
 Resource food = new Resource() { name = "Food" };
 Resource wood = new Resource() { name = "Wood" };
 Resource science = new Resource() { name = "Science" };
