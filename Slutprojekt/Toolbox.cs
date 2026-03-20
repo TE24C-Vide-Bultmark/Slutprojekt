@@ -9,11 +9,10 @@ public class Toolbox
         // spelaren får välja några namn
         Console.WriteLine("Please choose a name for your city.");
         string cityname = Console.ReadLine();
-        Console.WriteLine($"And who are the two founders of {cityname}?");
-        Console.Write("Farmer: ");
-        people.Add(Console.ReadLine());
-        Console.Write("Carpenter: ");
-        people.Add(Console.ReadLine());
+        Console.WriteLine($"And who is the founder of {cityname}?");
+        AddPerson(people);
+        Console.WriteLine($"And who is {people[0]}`s friend");
+        AddPerson(people);
         return cityname;
     }
 
@@ -103,18 +102,14 @@ public class Toolbox
 
     public static void Produce(List<Resource> resources, List<Building> buildings, List<string> people)
     {
-        // loop som går igenom varje resurs
-        for (int iterationResource = 0; iterationResource < resources.Count; iterationResource++)
+        // loop som går genom varje byggnad
+        for (int iterationBuilding = 0; iterationBuilding < buildings.Count; iterationBuilding++)
         {
-            // looå som går genom varje byggnad
-            for (int iterationBuilding = 0; iterationBuilding < buildings.Count; iterationBuilding++)
+            // går igenom varje kay-value pair i production
+            foreach (KeyValuePair<Resource, int> item in buildings[iterationBuilding].production)
             {
-                // kollar efter byggnader som producerar en viss resurs och ökar produktionen av den resursen med så mycket byggnaden producerar
-                if (buildings[iterationBuilding].productionResource == resources[iterationResource])
-                {
-                    // producerar den resursen
-                    resources[iterationResource].amount += buildings[iterationBuilding].productionAmount;
-                }
+                // ökar antalet item.key (resource) med item.value (int)
+                item.Key.amount += item.Value;
             }
         }
         // produktion ej baserat på byggnader
@@ -174,7 +169,8 @@ public class Toolbox
         techOptions = [];
         Console.Clear();
         Console.WriteLine("Congartualions your city discovered a new technology!");
-        for (int i = 0; i < 2; i++)
+        // loopen körs en gång för varje tech spelaren ska kunna forska
+        for (int i = 0; i < 3; i++)
         {
             int random = Random.Shared.Next(technologies.Count);
             techOptions.Add(technologies[random]);
@@ -199,18 +195,24 @@ public class Toolbox
     // denna metod ser till att du alltid har de resurser du kan producera i den resurslista
     public static void AddResource(List<Resource> resources, List<Building> techOptions, int choice)
     {
-        // loop som körs för varje resurs
-        for (int i=0; i < resources.Count; i++)
+
+        // loop som körs för varje objekt i vald byggnads production 
+        foreach (KeyValuePair<Resource, int> item in techOptions[choice - 1].production)
         {
-            // om resursen redan finns bryts loopen
-            if (resources[i] == techOptions[choice - 1].productionResource)
+            // loop som körs för varje resurs
+            for (int i = 0; i < resources.Count; i++)
             {
-                break;
-            }
-            // om resursen inte finns läggs den till i resurser
-            else if (i == resources.Count - 1)
-            {
-                resources.Add(techOptions[choice - 1].productionResource);
+                // kolla om resursen redan är med i "resources"
+                if (resources[i] == item.Key)
+                {
+                    break;
+                }
+                // om resursen inte finns läggs den till i resurser
+                else if (i == resources.Count - 1)
+                {
+                    resources.Add(item.Key);
+                    break;
+                }
             }
         }
     }
@@ -225,14 +227,14 @@ public class Toolbox
         // sätter namnet till ett otillåtet värde med syfte att köra loopen
         string name = "";
         // loopen kollar efter otillåtna värden
-            while (name.Length < 1 || name.Length > 20)
-            {
-                // informerar om restriktioner
-                Console.WriteLine("please choose a name for the new person. Name must be between 1 and 20 characters");
-                // lägger in det skrivna namnet i en variabel
-                name = Console.ReadLine();
-            }
-            // lägger till det skrivna namnet in i staden
-            people.Add(name);
+        while (name.Length < 1 || name.Length > 20)
+        {
+            // informerar om restriktioner
+            Console.WriteLine("please choose a name for the new person. Name must be between 1 and 20 characters");
+            // lägger in det skrivna namnet i en variabel
+            name = Console.ReadLine();
+        }
+        // lägger till det skrivna namnet in i staden
+        people.Add(name);
     }
 }
