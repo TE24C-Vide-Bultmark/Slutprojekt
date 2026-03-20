@@ -6,9 +6,10 @@
 Resource food = new Resource() { name = "Food" };
 Resource wood = new Resource() { name = "Wood" };
 Resource science = new Resource() { name = "Science" };
-List<Resource> resources = [food, wood, science];
 Resource stone = new Resource() { name = "Stone" };
 Resource ore = new Resource() { name = "Ore" };
+Resource metal = new Resource() { name = "metal" };
+List<Resource> resources = [food, wood, science];
 
 // byggnaderna i spelet
 Building farm = new Building() { name = "Farm", costResource = wood, production = new() {{food, 3}}};
@@ -42,7 +43,7 @@ while (true)
     // skriver upp display
     Console.Clear();
 
-    Console.WriteLine(cityname + "\n");
+    Console.WriteLine($"City name: {cityname}\n");
     Toolbox.DisplayBuildqueue(buildingOptions);
 
     Console.WriteLine();
@@ -51,7 +52,8 @@ while (true)
     Console.WriteLine();
     Toolbox.DisplayWork(people, buildings);
 
-    Console.WriteLine("\nPress Enter to go to the next day");
+    Console.WriteLine("\n\n--------------------------------------------------------------------------------");
+    Console.WriteLine("Press Enter to go to the next day");
     Console.WriteLine("Enter the number next to the building you want to build to start building it");
 
     // spelaren får möjlighet att byta vilken byggnad som byggs

@@ -1,3 +1,5 @@
+// orange building ANSI code: \u001b[38;5;208mbuilding\u001b[0m
+
 public class Toolbox
 {
     // introducerar spelet och låter spelaren namnge staden samt grundaren
@@ -23,7 +25,9 @@ public class Toolbox
     // skriver upp namn på staden och de byggnader du kan bygga
     public static void DisplayBuildqueue(List<Building> buildqueue)
     {
-        Console.WriteLine($"building - {buildqueue[0].name} ({buildqueue[0].progress}/{buildqueue[0].costAmount} {buildqueue[0].costResource.name})");
+        Console.WriteLine("--------------------------------------------------------------------------------");
+        Console.WriteLine($"Currently \u001b[38;5;208mbuilding\u001b[0m: {buildqueue[0].name} ({buildqueue[0].progress}/{buildqueue[0].costAmount} {buildqueue[0].costResource.name})");
+        Console.WriteLine("Queue:");
         // loopen går genom alla byggnader spelaren kan spela
         for (int iteration = 1; iteration < buildqueue.Count; iteration++)
         {
@@ -40,8 +44,8 @@ public class Toolbox
     // skriver upp resurserna
     public static void DisplayResources(List<Resource> resources, List<string> people, int day)
     {
-        Console.WriteLine("day " + day);
-        Console.WriteLine("food needed until next person: " + people.Count * people.Count);
+        Console.WriteLine("Day " + day);
+        Console.WriteLine("Food needed until next person: " + people.Count * people.Count);
         // skriver upp alla resurser spelaren kan producera
         for (int iteration = 0; iteration < resources.Count; iteration++)
         {
@@ -64,7 +68,7 @@ public class Toolbox
             // om det inte finns någon byggnad att jobba i kommer de bygga nya byggnader
             if (iteration >= buildings.Count)
             {
-                Console.WriteLine(" - building");
+                Console.WriteLine(" - \u001b[38;5;208mbuilding\u001b[0m");
             }
             // om det finns en byggnad kommer de att jobba i den
             else
