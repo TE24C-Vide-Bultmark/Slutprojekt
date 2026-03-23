@@ -14,8 +14,9 @@ Resource metal = new Resource() { name = "Metal" };
 // byggnaderna i spelet
 Building farm = new Building() { name = "Farm", costResource = wood, production = new() {{food, 3}}};
 Building carpentry = new Building() { name = "Carpentry", costAmount = 5, costResource = wood , production = new() {{wood, 1}}};
-// byggnaderna du kan bygga
+// byggnaderan du börjar med
 List<Building> buildingOptions = [farm, carpentry];
+// resterande byggnader
 Building bigFarm = new Building() { name = "Big Farm", costAmount = 30, costResource = stone, production = new() {{food, 10}} };
 Building library = new Building() { name = "Library", costAmount = 3, costResource = wood, production = new() {{science, 1}} };
 Building quarry = new Building() { name = "Quarry", costAmount = 15, costResource = wood, production = new() {{stone, 1}} };
@@ -73,7 +74,7 @@ while (true)
         {
             for (int i = 0; i < technologytree.Count; i++)
             {
-                if (technologytree[i].Count>1)
+                if (technologytree[i].Count > 2)
                 {
                     Toolbox.Research(techOptions, technologytree[i], buildingOptions, science, resources);
                     break;

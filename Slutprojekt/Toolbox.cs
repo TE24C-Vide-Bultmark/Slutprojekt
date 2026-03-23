@@ -109,17 +109,30 @@ public class Toolbox
         // loop som går genom varje byggnad
         for (int iterationBuilding = 0; iterationBuilding < buildings.Count; iterationBuilding++)
         {
-            // går igenom varje kay-value pair i production
+            // variabel som håller koll på om en byggnad kan producera sina resurser eller inte
+            bool canProduce = true;
             foreach (KeyValuePair<Resource, int> item in buildings[iterationBuilding].production)
             {
-                // ökar antalet item.key (resource) med item.value (int)
-                item.Key.amount += item.Value;
+                // kollar om produktionen skulle resultera i ett negativt anatal resurser
+                if (item.Key.amount + item.Value < 0)
+                {
+                    canProduce = false;
+                    break;
+                }
+            }
+            // kollar om denna byggnaden kan producera sina resurser
+            if (canProduce)
+            {
+                // går igenom varje kay-value pair i production
+                foreach (KeyValuePair<Resource, int> item in buildings[iterationBuilding].production)
+                {
+                    // ökar antalet item.key (resource) med item.value (int)
+                    item.Key.amount += item.Value;
+                }
             }
         }
-        // produktion ej baserat på byggnader
-        // rsources[0] är food
+        // produktion ej baserat på byggnader. resources[0] är food och resources[2] är science
         resources[0].amount -= people.Count;
-        // resources[2] är science
         resources[2].amount += people.Count;
     }
 
@@ -228,17 +241,49 @@ public class Toolbox
     // låter spelaren lägga till en person i staden
     public static void AddPerson(List<string> people)
     {
-        // sätter namnet till ett otillåtet värde med syfte att köra loopen
-        string name = "";
-        // loopen kollar efter otillåtna värden
-        while (name.Length < 1 || name.Length > 20)
-        {
-            // informerar om restriktioner
-            Console.WriteLine("please choose a name for the new person. Name must be between 1 and 20 characters");
-            // lägger in det skrivna namnet i en variabel
+        // frågar spelaren om ett namn för den nya personen
+        Console.WriteLine("please choose a name for the new person.");
+        string name;
+        bool nameIsLegal;
+        // loopen kollar efter otillåtna namn
+        do{
+            // läser in namn
             name = Console.ReadLine();
-        }
+            nameIsLegal = checkName(name, people);
+            // om namnet INTE är tillåtet, körs loopen igen
+        } while (nameIsLegal!);
         // lägger till det skrivna namnet in i staden
         people.Add(name);
+    }
+
+
+
+
+
+    // kollar om ett namn är tillåtet
+    public static bool checkName(string name, List<string> people)
+    {
+        // antar tillåtet namn
+        bool nameIsLegal = true;
+        if (name.Length < 1)
+        {
+            Console.WriteLine("name must be at least 1 charcahter");
+            nameIsLegal = false;
+        }
+        if (name.Length > 15)
+        {
+            Console.WriteLine("name must be at most 15 charachters");
+            nameIsLegal = false;
+        }
+        foreach (string person in people)
+        {
+            if (name == person)
+            {
+                Console.WriteLine("name can not be the same as another person");
+                nameIsLegal = false;
+                break;
+            }
+        }
+        return nameIsLegal;
     }
 }
