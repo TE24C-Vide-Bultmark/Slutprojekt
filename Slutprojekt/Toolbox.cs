@@ -1,8 +1,8 @@
-// orange building ANSI code: \u001b[38;5;208mbuilding\u001b[0m
+// orange colored "building" ANSI code: \u001b[38;5;208mbuilding\u001b[0m
 
 public class Toolbox
 {
-    // introducerar spelet och låter spelaren namnge staden samt grundaren
+    // introducerar spelet och låter spelaren namnge staden samt lägger till de första människorna
     public static string Intro(List<string> people)
     {
         // förklarar spelet
@@ -10,7 +10,13 @@ public class Toolbox
         Console.WriteLine("In this game you manage a city and watch it grow.");
         // spelaren får välja några namn
         Console.WriteLine("Please choose a name for your city.");
-        string cityname = Console.ReadLine();
+        string cityname;
+        do
+        {
+            // läser in namn
+            cityname = Console.ReadLine();
+            // om namnet INTE är tillåtet, körs loopen igen
+        } while (!CheckName(cityname, []));
         Console.WriteLine($"And who is the founder of {cityname}?");
         AddPerson(people);
         Console.WriteLine($"And who is {people[0]}`s friend");
@@ -23,16 +29,16 @@ public class Toolbox
 
 
     // skriver upp namn på staden och de byggnader du kan bygga
-    public static void DisplayBuildqueue(List<Building> buildqueue)
+    public static void DisplayBuildingOptions(List<Building> buildingOptions)
     {
         Console.WriteLine("--------------------------------------------------------------------------------");
-        Console.WriteLine($"Currently \u001b[38;5;208mbuilding\u001b[0m: {buildqueue[0].name} ({buildqueue[0].progress}/{buildqueue[0].costAmount} {buildqueue[0].costResource.name})");
-        Console.WriteLine("Queue:");
+        Console.WriteLine($"Currently \u001b[38;5;208mbuilding\u001b[0m: {buildingOptions[0].name} ({buildingOptions[0].progress}/{buildingOptions[0].costAmount} {buildingOptions[0].costResource.name})");
+        Console.WriteLine("Options:");
         // loopen går genom alla byggnader spelaren kan spela
-        for (int iteration = 1; iteration < buildqueue.Count; iteration++)
+        for (int iteration = 1; iteration < buildingOptions.Count; iteration++)
         {
             // skriver upp byggnadens plats, namn, progress, kostnad och vilken resurs den kostar
-            Console.WriteLine($"{iteration}) {buildqueue[iteration].name} ({buildqueue[iteration].progress}/{buildqueue[iteration].costAmount} {buildqueue[iteration].costResource.name})");
+            Console.WriteLine($"{iteration}) {buildingOptions[iteration].name} ({buildingOptions[iteration].progress}/{buildingOptions[iteration].costAmount} {buildingOptions[iteration].costResource.name})");
         }
 
     }
@@ -60,21 +66,18 @@ public class Toolbox
     // skriver upp personer och arbetsuppgifter
     public static void DisplayWork(List<string> people, List<Building> buildings)
     {
-        // går genom all personer från nyast till äldst
-        for (int iteration = people.Count - 1; iteration >= 0; iteration--)
+        // kollar om du har fler byggnader eller personer
+        if (people.Count >= buildings.Count)
         {
-            // skriver namn
-            Console.Write(people[iteration]);
-            // om det inte finns någon byggnad att jobba i kommer de bygga nya byggnader
-            if (iteration >= buildings.Count)
-            {
-                Console.WriteLine(" - \u001b[38;5;208mbuilding\u001b[0m");
-            }
-            // om det finns en byggnad kommer de att jobba i den
-            else
-            {
-                Console.WriteLine(" - " + buildings[iteration].name);
-            }
+            // körs om du har fler personer än byggnader
+            for (int i = people.Count; i > buildings.Count; i--) Console.WriteLine(people[i] + " - \u001b[38;5;208mbuilding\u001b[0m");
+            for (int i = buildings.Count; i >= 0; i--) Console.WriteLine(people[i] + " - " + buildings[i].name);
+        }
+        else
+        {
+            // om du har fler byggander än personer
+            for (int i = buildings.Count; i >= people.Count; i--) Console.WriteLine("[empty] - " + buildings[i]);
+            for (int i = people.Count; i >= 0; i--) Console.WriteLine(people[i] + " - " + buildings[i].name);
         }
     }
 
@@ -83,17 +86,17 @@ public class Toolbox
 
 
     // byter plats på vald byggnad och byggnaden under konstruktion, om spelaren skrev in input som inte korresponderar med en byggnad går vi över till nästa dag
-    public static bool SwitchBuilding(List<Building> buildqueue)
+    public static bool SwitchBuilding(List<Building> buildingOptions)
     {
         int input;
         // sätter in det skrivna numret i input
         int.TryParse(Console.ReadLine(), out input);
         // om spelarens input korresponderar till en av byggvalen börjar staden bygga den byggnaden
-        if (buildqueue.Count > input && input > 0)
+        if (buildingOptions.Count > input && input > 0)
         {
-            Building temp = buildqueue[input];
-            buildqueue[input] = buildqueue[0];
-            buildqueue[0] = temp;
+            Building temp = buildingOptions[input];
+            buildingOptions[input] = buildingOptions[0];
+            buildingOptions[0] = temp;
             return false;
         }
         // om inputen inte korresponderar till en byggnad tolkas detta som en pass
@@ -110,16 +113,7 @@ public class Toolbox
         for (int iterationBuilding = 0; iterationBuilding < buildings.Count; iterationBuilding++)
         {
             // variabel som håller koll på om en byggnad kan producera sina resurser eller inte
-            bool canProduce = true;
-            foreach (KeyValuePair<Resource, int> item in buildings[iterationBuilding].production)
-            {
-                // kollar om produktionen skulle resultera i ett negativt anatal resurser
-                if (item.Key.amount + item.Value < 0)
-                {
-                    canProduce = false;
-                    break;
-                }
-            }
+            bool canProduce = CheckCost(buildings, iterationBuilding);
             // kollar om denna byggnaden kan producera sina resurser
             if (canProduce)
             {
@@ -156,24 +150,26 @@ public class Toolbox
 
 
 
-    public static void BuildingWork(List<string> people, List<Building> buildings, List<Building> buildqueue)
+    public static void BuildingWork(List<string> people, List<Building> buildings, List<Building> buildingOptions)
     {
         // bygger på byggnad
-        if (buildqueue[0].costResource.amount > people.Count - buildings.Count)
+        if (buildingOptions[0].costResource.amount > people.Count - buildings.Count)
         {
-            buildqueue[0].progress += people.Count - buildings.Count;
-            buildqueue[0].costResource.amount -= people.Count - buildings.Count;
+            // om du har mer resurser än personer som bygger så tas förlorar du reurser lika med hur många som bygger och byggnaden får så mycket progress
+            buildingOptions[0].progress += people.Count - buildings.Count;
+            buildingOptions[0].costResource.amount -= people.Count - buildings.Count;
         }
         else
         {
-            buildqueue[0].progress += buildqueue[0].costResource.amount;
-            buildqueue[0].costResource.amount = 0;
+            // om du har färre resurser än du har personer som bygger går alla resurser till progress och antalet reurser blir 0
+            buildingOptions[0].progress += buildingOptions[0].costResource.amount;
+            buildingOptions[0].costResource.amount = 0;
         }
         // lägger till byggnaden om den är färdig
-        if (buildqueue[0].progress >= buildqueue[0].costAmount)
+        if (buildingOptions[0].progress >= buildingOptions[0].costAmount)
         {
-            buildqueue[0].progress = 0;
-            buildings.Add(buildqueue[0]);
+            buildingOptions[0].progress = 0;
+            buildings.Add(buildingOptions[0]);
         }
     }
 
@@ -181,9 +177,9 @@ public class Toolbox
 
 
 
-    public static void Research(List<Building> techOptions, List<Building> technologies, List<Building> buildingOptions, Resource science, List<Resource> resources)
+    public static void Research(List<Building> technologies, List<Building> buildingOptions, Resource science, List<Resource> resources)
     {
-        techOptions = [];
+        List<Building> techOptions = [];
         Console.Clear();
         Console.WriteLine("Congartualions your city discovered a new technology!");
         // loopen körs en gång för varje tech spelaren ska kunna forska
@@ -244,14 +240,13 @@ public class Toolbox
         // frågar spelaren om ett namn för den nya personen
         Console.WriteLine("please choose a name for the new person.");
         string name;
-        bool nameIsLegal;
         // loopen kollar efter otillåtna namn
-        do{
+        do
+        {
             // läser in namn
             name = Console.ReadLine();
-            nameIsLegal = checkName(name, people);
             // om namnet INTE är tillåtet, körs loopen igen
-        } while (nameIsLegal!);
+        } while (!CheckName(name, people));
         // lägger till det skrivna namnet in i staden
         people.Add(name);
     }
@@ -261,29 +256,63 @@ public class Toolbox
 
 
     // kollar om ett namn är tillåtet
-    public static bool checkName(string name, List<string> people)
+    public static bool CheckName(string name, List<string> names)
     {
-        // antar tillåtet namn
-        bool nameIsLegal = true;
         if (name.Length < 1)
         {
             Console.WriteLine("name must be at least 1 charcahter");
-            nameIsLegal = false;
+            return false;
         }
         if (name.Length > 15)
         {
             Console.WriteLine("name must be at most 15 charachters");
-            nameIsLegal = false;
+            return false;
         }
-        foreach (string person in people)
+        foreach (string item in names)
         {
-            if (name == person)
+            if (name == item)
             {
                 Console.WriteLine("name can not be the same as another person");
-                nameIsLegal = false;
-                break;
+                return false;
             }
         }
-        return nameIsLegal;
+        return true;
+    }
+
+
+
+
+
+    // kollar om en byggnad skulle resultera i negativa resurser
+    public static bool CheckCost(List<Building> buildings, int iterationBuilding)
+    {
+        foreach (KeyValuePair<Resource, int> item in buildings[iterationBuilding].production)
+        {
+            // kollar om produktionen skulle resultera i ett negativt anatal resurser
+            if (item.Key.amount + item.Value < 0)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+
+
+
+    public static List<List<Building>> GenerateTechnologyTree()
+    {
+        // teknologier, det ska kunna försvinna byggnader från dessa, därav måste de vara listor istället för arrayer
+        List<Building> technologies0 = [Building.library, Building.quarry, Building.quarry, Building.sawmill];
+        List<Building> technologies1 = [Building.bigFarm, Building.library, Building.quarry, Building.badMine];
+        List<Building> technologies2 = [Building.bigFarm, Building.bigFarm, Building.badMine, Building.goodMine, Building.forge];
+
+        // skappar ett teknologiträd och lägger in alla teknologier
+        List<List<Building>> technologytree = [];
+        technologytree.Add(technologies0);
+        technologytree.Add(technologies1);
+        technologytree.Add(technologies2);
+        return technologytree;
     }
 }
