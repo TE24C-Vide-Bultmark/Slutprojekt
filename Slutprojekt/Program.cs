@@ -29,35 +29,28 @@ while (true)
     Toolbox.DisplayResources(resources, people, day);
 
     Console.WriteLine();
-    Toolbox.DisplayWork(people, buildings);
-
-    Console.WriteLine();
-    // skriver ut kyrkogård
-    Console.WriteLine("graveyard:");
-    for (int i = 0; i < graveyard.Count; i++)
-    {
-        // Console.WriteLine(graveyard[i]);
-    }
+    Toolbox.DisplayWork(people, buildings);    
 
     Console.WriteLine("\n\n--------------------------------------------------------------------------------");
     Console.WriteLine("Press Enter to go to the next day");
     Console.WriteLine("Enter the number next to the building you want to build");
+    Console.WriteLine("Enter g to show graveyard");
 
     // spelaren får möjlighet att byta vilken byggnad som byggs
-    if (Toolbox.SwitchBuilding(buildingOptions))
+    if (Toolbox.SwitchBuilding(buildingOptions, graveyard))
     {
         day++;
         Toolbox.Produce(resources, buildings, people);
         Toolbox.BuildingWork(people, buildings, buildingOptions);
         Toolbox.PopulationGrowth(Resource.food, people);
-        // personer dör
-        for (int iteration = 0; iteration > people.Count; iteration++)
+        // loopen går igenom alla personer i din stad
+        for (int iteration = 0; iteration < people.Count; iteration++)
         {
             // slumpar ett tal mellan från och med 0 till och med 99
-            if (0 == Random.Shared.Next(100))
+            if (0 == Random.Shared.Next(100) || people[iteration] == "arvid")
             {
-                // dödar personen om deu rullar 0
-                graveyard.Add(people[iteration]);
+                // dödar personen om den får 0
+                graveyard.Add(people[iteration] + " died  " + day);
                 people.RemoveAt(iteration);
             }
         }

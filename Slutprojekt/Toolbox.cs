@@ -70,14 +70,16 @@ public class Toolbox
         if (people.Count >= buildings.Count)
         {
             // körs om du har fler personer än byggnader
-            for (int i = people.Count; i > buildings.Count; i--) Console.WriteLine(people[i] + " - \u001b[38;5;208mbuilding\u001b[0m");
-            for (int i = buildings.Count; i >= 0; i--) Console.WriteLine(people[i] + " - " + buildings[i].name);
+            for (int i = people.Count - 1; i >= buildings.Count; i--) Console.WriteLine(people[i] + " - \u001b[38;5;208mbuilding\u001b[0m");
+            // körs för de personer so  har en byggnad
+            for (int i = buildings.Count - 1; i >= 0; i--) Console.WriteLine(people[i] + " - " + buildings[i].name);
         }
         else
         {
             // om du har fler byggander än personer
-            for (int i = buildings.Count; i >= people.Count; i--) Console.WriteLine("[empty] - " + buildings[i]);
-            for (int i = people.Count; i >= 0; i--) Console.WriteLine(people[i] + " - " + buildings[i].name);
+            for (int i = buildings.Count - 1; i >= people.Count; i--) Console.WriteLine("[empty] - " + buildings[i].name);
+            // körs för de byggnader som har personer
+            for (int i = people.Count - 1; i >= 0; i--) Console.WriteLine(people[i] + " - " + buildings[i].name);
         }
     }
 
@@ -86,16 +88,27 @@ public class Toolbox
 
 
     // byter plats på vald byggnad och byggnaden under konstruktion, om spelaren skrev in input som inte korresponderar med en byggnad går vi över till nästa dag
-    public static bool SwitchBuilding(List<Building> buildingOptions)
+    public static bool SwitchBuilding(List<Building> buildingOptions, List<string> graveyard)
     {
-        int input;
+        string input = Console.ReadLine();
+        int inputInt;
         // sätter in det skrivna numret i input
-        int.TryParse(Console.ReadLine(), out input);
-        // om spelarens input korresponderar till en av byggvalen börjar staden bygga den byggnaden
-        if (buildingOptions.Count > input && input > 0)
+        int.TryParse(input, out inputInt);
+        if (input == "g")
         {
-            Building temp = buildingOptions[input];
-            buildingOptions[input] = buildingOptions[0];
+            Console.Clear();
+            // skriver ut kyrkogård
+            Console.WriteLine("In memory of:");
+            for (int i = 0; i < graveyard.Count; i++) Console.WriteLine(graveyard[i]);
+            Console.WriteLine("\nPress enter to go back");
+            Console.ReadLine();
+            return false;
+        }
+        // om spelarens input korresponderar till en av byggvalen börjar staden bygga den byggnaden
+        if (buildingOptions.Count > inputInt && inputInt > 0)
+        {
+            Building temp = buildingOptions[inputInt];
+            buildingOptions[inputInt] = buildingOptions[0];
             buildingOptions[0] = temp;
             return false;
         }
@@ -113,7 +126,7 @@ public class Toolbox
         for (int iterationBuilding = 0; iterationBuilding < buildings.Count; iterationBuilding++)
         {
             // variabel som håller koll på om en byggnad kan producera sina resurser eller inte
-            bool canProduce = CheckCost(buildings, iterationBuilding);
+            bool canProduce = CheckCanproduce(buildings, iterationBuilding, people);
             // kollar om denna byggnaden kan producera sina resurser
             if (canProduce)
             {
@@ -152,24 +165,28 @@ public class Toolbox
 
     public static void BuildingWork(List<string> people, List<Building> buildings, List<Building> buildingOptions)
     {
-        // bygger på byggnad
-        if (buildingOptions[0].costResource.amount > people.Count - buildings.Count)
+        // kollar om har personer som bygger
+        if (people.Count > buildings.Count)
         {
-            // om du har mer resurser än personer som bygger så tas förlorar du reurser lika med hur många som bygger och byggnaden får så mycket progress
-            buildingOptions[0].progress += people.Count - buildings.Count;
-            buildingOptions[0].costResource.amount -= people.Count - buildings.Count;
-        }
-        else
-        {
-            // om du har färre resurser än du har personer som bygger går alla resurser till progress och antalet reurser blir 0
-            buildingOptions[0].progress += buildingOptions[0].costResource.amount;
-            buildingOptions[0].costResource.amount = 0;
-        }
-        // lägger till byggnaden om den är färdig
-        if (buildingOptions[0].progress >= buildingOptions[0].costAmount)
-        {
-            buildingOptions[0].progress = 0;
-            buildings.Add(buildingOptions[0]);
+            // bygger på byggnad
+            if (buildingOptions[0].costResource.amount > people.Count - buildings.Count)
+            {
+                // om du har mer resurser än personer som bygger så tas förlorar du reurser lika med hur många som bygger och byggnaden får så mycket progress
+                buildingOptions[0].progress += people.Count - buildings.Count;
+                buildingOptions[0].costResource.amount -= people.Count - buildings.Count;
+            }
+            else
+            {
+                // om du har färre resurser än du har personer som bygger går alla resurser till progress och antalet reurser blir 0
+                buildingOptions[0].progress += buildingOptions[0].costResource.amount;
+                buildingOptions[0].costResource.amount = 0;
+            }
+            // lägger till byggnaden om den är färdig
+            if (buildingOptions[0].progress >= buildingOptions[0].costAmount)
+            {
+                buildingOptions[0].progress = 0;
+                buildings.Add(buildingOptions[0]);
+            }
         }
     }
 
@@ -283,13 +300,13 @@ public class Toolbox
 
 
 
-    // kollar om en byggnad skulle resultera i negativa resurser
-    public static bool CheckCost(List<Building> buildings, int iterationBuilding)
+    // kollar om en byggnad kan producera
+    public static bool CheckCanproduce(List<Building> buildings, int iterationBuilding, List<string> people)
     {
         foreach (KeyValuePair<Resource, int> item in buildings[iterationBuilding].production)
         {
-            // kollar om produktionen skulle resultera i ett negativt anatal resurser
-            if (item.Key.amount + item.Value < 0)
+            // kollar om produktionen skulle resultera i ett negativt antal resurser eller om det finns en person
+            if (item.Key.amount + item.Value < 0 || iterationBuilding > people.Count - 1)
             {
                 return false;
             }
