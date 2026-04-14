@@ -23,29 +23,24 @@ while (true)
     Console.Clear();
 
     Console.WriteLine($"City name: {cityname}\n");
-    Toolbox.DisplayBuildingOptions(buildingOptions);
+    Console.WriteLine($"Currently \u001b[38;5;208mbuilding\u001b[0m: {buildingOptions[0].name} ({buildingOptions[0].progress}/{buildingOptions[0].costAmount} {buildingOptions[0].costResource.name})");
 
     Console.WriteLine();
     Toolbox.DisplayResources(resources, people, day);
 
     Console.WriteLine();
-    Toolbox.DisplayWork(people, buildings);    
+    Toolbox.DisplayWork(people, buildings);
 
-    Console.WriteLine("\n\n--------------------------------------------------------------------------------");
-    Console.WriteLine("1 - show graveyard");
-    Console.WriteLine("2 - change currently building");
-    Console.WriteLine("3 - manage city");
-    Console.WriteLine("4 - go to next day");
-    string input = Console.ReadLine();
-
-    if (input == "1")
-    {
-        
-    }
+    Console.WriteLine("\n--------------------------------------------------------------------------------");
+    Console.WriteLine("enter the number to the left of the building you want to switch");
+    Console.WriteLine("g - show graveyard");
+    Console.WriteLine("h - change currently building");
+    Console.WriteLine("any - go to next day");
 
     // spelaren får möjlighet att byta vilken byggnad som byggs
-    if (Toolbox.SwitchBuilding(buildingOptions, graveyard))
+    if (Toolbox.ReadInput(buildingOptions, graveyard, buildings))
     {
+        day++;
         Toolbox.NewDay(day, resources, buildings, people, buildingOptions, graveyard, technologytree);
     }
 }

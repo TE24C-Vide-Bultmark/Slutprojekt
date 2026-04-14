@@ -1,7 +1,5 @@
 // orange colored "building" ANSI code: \u001b[38;5;208mbuilding\u001b[0m
 
-using System.ComponentModel.Design;
-
 public class Toolbox
 {
     // introducerar spelet och låter spelaren namnge staden samt lägger till de första människorna
@@ -33,7 +31,6 @@ public class Toolbox
     // skriver upp namn på staden och de byggnader du kan bygga
     public static void DisplayBuildingOptions(List<Building> buildingOptions)
     {
-        Console.WriteLine("--------------------------------------------------------------------------------");
         Console.WriteLine($"Currently \u001b[38;5;208mbuilding\u001b[0m: {buildingOptions[0].name} ({buildingOptions[0].progress}/{buildingOptions[0].costAmount} {buildingOptions[0].costResource.name})");
         Console.WriteLine("Options:");
         // loopen går genom alla byggnader spelaren kan spela
@@ -72,16 +69,16 @@ public class Toolbox
         if (people.Count >= buildings.Count)
         {
             // körs om du har fler personer än byggnader
-            for (int i = people.Count - 1; i >= buildings.Count; i--) Console.WriteLine(people[i] + " - \u001b[38;5;208mbuilding\u001b[0m");
+            for (int i = people.Count - 1; i >= buildings.Count; i--) Console.WriteLine(i+1 + ") " + people[i] + " - \u001b[38;5;208mbuilding\u001b[0m");
             // körs för de personer so  har en byggnad
-            for (int i = buildings.Count - 1; i >= 0; i--) Console.WriteLine(people[i] + " - " + buildings[i].name);
+            for (int i = buildings.Count - 1; i >= 0; i--) Console.WriteLine(i+1 + ") " + people[i] + " - " + buildings[i].name);
         }
         else
         {
             // om du har fler byggander än personer
-            for (int i = buildings.Count - 1; i >= people.Count; i--) Console.WriteLine("[empty] - " + buildings[i].name);
+            for (int i = buildings.Count - 1; i >= people.Count; i--) Console.WriteLine(i+1 + ") [empty] - " + buildings[i].name);
             // körs för de byggnader som har personer
-            for (int i = people.Count - 1; i >= 0; i--) Console.WriteLine(people[i] + " - " + buildings[i].name);
+            for (int i = people.Count - 1; i >= 0; i--) Console.WriteLine(i+1 + ") " + people[i] + " - " + buildings[i].name);
         }
     }
 
@@ -90,30 +87,50 @@ public class Toolbox
 
 
     // byter plats på vald byggnad och byggnaden under konstruktion, om spelaren skrev in input som inte korresponderar med en byggnad går vi över till nästa dag
-    public static bool SwitchBuilding(List<Building> buildingOptions, List<string> graveyard)
+    public static bool ReadInput(List<Building> buildingOptions, List<string> graveyard, List<Building> buildings)
     {
         string input = Console.ReadLine();
         int inputInt;
         // sätter in det skrivna numret i input
-        int.TryParse(input, out inputInt);
+        bool success = int.TryParse(input, out inputInt);
         if (input == "g")
         {
             Console.Clear();
-            // skriver ut kyrkogård
+            // skriver ut kyrkogården
             Console.WriteLine("In memory of:");
             for (int i = 0; i < graveyard.Count; i++) Console.WriteLine(graveyard[i]);
             Console.WriteLine("\nPress enter to go back");
             Console.ReadLine();
             return false;
         }
-        // om spelarens input korresponderar till en av byggvalen börjar staden bygga den byggnaden
-        if (buildingOptions.Count > inputInt && inputInt > 0)
+        else if (input == "h")
         {
-            Building temp = buildingOptions[inputInt];
-            buildingOptions[inputInt] = buildingOptions[0];
-            buildingOptions[0] = temp;
+            Console.Clear();
+            DisplayBuildingOptions(buildingOptions);
+            int secondInput;
+            Console.WriteLine("Enter the number left to the building you want to start building");
+            int.TryParse(Console.ReadLine(), out secondInput);
+            if (buildingOptions.Count > secondInput && secondInput > 0)
+            {
+                Building temp = buildingOptions[secondInput];
+                buildingOptions[secondInput] = buildingOptions[0];
+                buildingOptions[0] = temp;
+            }
             return false;
         }
+        // byter plats på byggnader i staden
+        else if (buildings.Count > inputInt && success)
+        {
+            int secondInput;
+            Console.WriteLine("Enter the number left to the building you want to switch it with");
+            int.TryParse(Console.ReadLine(), out secondInput);
+            secondInput--;
+            Building temp = buildings[inputInt];
+            buildings[inputInt] = buildings[secondInput];
+            buildings[secondInput] = temp;
+            return false;
+        }
+        // om spelarens input korresponderar till en av byggvalen börjar staden bygga den byggnaden
         // om inputen inte korresponderar till en byggnad tolkas detta som en pass
         else return true;
     }
@@ -375,7 +392,6 @@ public class Toolbox
 
     public static void NewDay(int day, List<Resource> resources, List<Building> buildings, List<string> people, List<Building> buildingOptions, List<string> graveyard, List<List<Building>> technologyTree)
     {
-        day++;
         Produce(resources, buildings, people);
         BuildingWork(people, buildings, buildingOptions);
         PopulationGrowth(Resource.food, people, day);
@@ -387,7 +403,7 @@ public class Toolbox
             {
                 if (technologyTree[i].Count > 2)
                 {
-                    Toolbox.Research(technologyTree[i], buildingOptions, Resource.science, resources);
+                    Research(technologyTree[i], buildingOptions, Resource.science, resources);
                     break;
                 }
             }
