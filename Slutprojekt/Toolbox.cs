@@ -1,9 +1,11 @@
 // orange colored "building" ANSI code: \u001b[38;5;208mbuilding\u001b[0m
 
+using System.ComponentModel.Design;
+
 public class Toolbox
 {
     // introducerar spelet och låter spelaren namnge staden samt lägger till de första människorna
-    public static string Intro(List<string> people)
+    public static string Intro(List<string> people, int day)
     {
         // förklarar spelet
         Console.WriteLine("Hello and welcome to my game!");
@@ -17,10 +19,10 @@ public class Toolbox
             cityname = Console.ReadLine();
             // om namnet INTE är tillåtet, körs loopen igen
         } while (!CheckName(cityname, []));
-        Console.WriteLine($"And who is the founder of {cityname}?");
-        AddPerson(people);
-        Console.WriteLine($"And who is {people[0]}`s friend");
-        AddPerson(people);
+        Console.WriteLine($"And who is the first founder of {cityname}?");
+        AddPerson(people, day);
+        Console.WriteLine($"And who is the second founder");
+        AddPerson(people, day);
         return cityname;
     }
 
@@ -147,7 +149,7 @@ public class Toolbox
 
 
 
-    public static void PopulationGrowth(Resource food, List<string> people)
+    public static void PopulationGrowth(Resource food, List<string> people, int day)
     {
         // ökar population
         if (food.amount >= people.Count * people.Count)
@@ -155,7 +157,7 @@ public class Toolbox
             food.amount = 0;
             Console.Clear();
             Console.WriteLine("congratulations, a new member of your city has appeared!");
-            AddPerson(people);
+            AddPerson(people, day);
         }
     }
 
@@ -252,7 +254,7 @@ public class Toolbox
 
 
     // låter spelaren lägga till en person i staden
-    public static void AddPerson(List<string> people)
+    public static void AddPerson(List<string> people, int day)
     {
         // frågar spelaren om ett namn för den nya personen
         Console.WriteLine("please choose a name for the new person.");
@@ -265,7 +267,7 @@ public class Toolbox
             // om namnet INTE är tillåtet, körs loopen igen
         } while (!CheckName(name, people));
         // lägger till det skrivna namnet in i staden
-        people.Add(name);
+        people.Add(name + ": born day " + day);
     }
 
 
@@ -277,12 +279,12 @@ public class Toolbox
     {
         if (name.Length < 1)
         {
-            Console.WriteLine("name must be at least 1 charcahter");
+            Console.WriteLine("name must be at least 1 character");
             return false;
         }
-        if (name.Length > 15)
+        if (name.Length > 50)
         {
-            Console.WriteLine("name must be at most 15 charachters");
+            Console.WriteLine("name must be at most 50 characters");
             return false;
         }
         foreach (string item in names)
@@ -331,5 +333,64 @@ public class Toolbox
         technologytree.Add(technologies1);
         technologytree.Add(technologies2);
         return technologytree;
+    }
+
+
+
+
+
+    // tillåter spelaren att byta plats på byggnader
+    public static void ChangeLayout(List<Building> buildings)
+    {
+        Console.WriteLine("select which building to switch");
+        int building1;
+        bool success = int.TryParse(Console.ReadLine(), out building1);
+        Console.WriteLine("select which building to switch it with");
+        int building2;
+        success = int.TryParse(Console.ReadLine(), out building2);
+
+        // bytter plats på de tvp valda byggnaderna
+        Building temp = buildings[building1];
+        buildings[building1] = buildings[building2];
+        buildings[building1] = temp;
+    }
+
+    public static void KillPeople(List<string> people, List<string> graveyard, int day)
+    {
+        // loopen går igenom alla personer i din stad
+        for (int iteration = 0; iteration < people.Count; iteration++)
+        {
+            // slumpar ett tal mellan från och med 0 till och med 99
+            if (0 == Random.Shared.Next(100))
+            {
+                // dödar personen om den får 0
+                graveyard.Add(people[iteration] + " died day " + day);
+                people.RemoveAt(iteration);
+            }
+        }
+    }
+
+
+
+
+    public static void NewDay(int day, List<Resource> resources, List<Building> buildings, List<string> people, List<Building> buildingOptions, List<string> graveyard, List<List<Building>> technologyTree)
+    {
+        day++;
+        Produce(resources, buildings, people);
+        BuildingWork(people, buildings, buildingOptions);
+        PopulationGrowth(Resource.food, people, day);
+        KillPeople(people, graveyard, day);
+        // om spelaren har tillräckligt med forskning får de välja mellan 2 nya teknologier
+        if (Resource.science.amount >= 50)
+        {
+            for (int i = 0; i < technologyTree.Count; i++)
+            {
+                if (technologyTree[i].Count > 2)
+                {
+                    Toolbox.Research(technologyTree[i], buildingOptions, Resource.science, resources);
+                    break;
+                }
+            }
+        }
     }
 }

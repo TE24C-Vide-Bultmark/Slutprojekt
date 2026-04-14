@@ -14,8 +14,8 @@ List<string> graveyard = [];
 // lista med alla byggnader du har byggt
 List<Building> buildings = [Building.farm, Building.carpentry];
 
-string cityname = Toolbox.Intro(people);
 int day = 1;
+string cityname = Toolbox.Intro(people, day);
 
 while (true)
 {
@@ -32,39 +32,20 @@ while (true)
     Toolbox.DisplayWork(people, buildings);    
 
     Console.WriteLine("\n\n--------------------------------------------------------------------------------");
-    Console.WriteLine("Press Enter to go to the next day");
-    Console.WriteLine("Enter the number next to the building you want to build");
-    Console.WriteLine("Enter g to show graveyard");
+    Console.WriteLine("1 - show graveyard");
+    Console.WriteLine("2 - change currently building");
+    Console.WriteLine("3 - manage city");
+    Console.WriteLine("4 - go to next day");
+    string input = Console.ReadLine();
+
+    if (input == "1")
+    {
+        
+    }
 
     // spelaren får möjlighet att byta vilken byggnad som byggs
     if (Toolbox.SwitchBuilding(buildingOptions, graveyard))
     {
-        day++;
-        Toolbox.Produce(resources, buildings, people);
-        Toolbox.BuildingWork(people, buildings, buildingOptions);
-        Toolbox.PopulationGrowth(Resource.food, people);
-        // loopen går igenom alla personer i din stad
-        for (int iteration = 0; iteration < people.Count; iteration++)
-        {
-            // slumpar ett tal mellan från och med 0 till och med 99
-            if (0 == Random.Shared.Next(100) || people[iteration] == "arvid")
-            {
-                // dödar personen om den får 0
-                graveyard.Add(people[iteration] + " died  " + day);
-                people.RemoveAt(iteration);
-            }
-        }
-        // om spelaren har tillräckligt med forskning får de välja mellan 2 nya teknologier
-        if (Resource.science.amount >= 50)
-        {
-            for (int i = 0; i < technologytree.Count; i++)
-            {
-                if (technologytree[i].Count > 2)
-                {
-                    Toolbox.Research(technologytree[i], buildingOptions, Resource.science, resources);
-                    break;
-                }
-            }
-        }
+        Toolbox.NewDay(day, resources, buildings, people, buildingOptions, graveyard, technologytree);
     }
 }
