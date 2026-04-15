@@ -69,16 +69,16 @@ public class Toolbox
         if (people.Count >= buildings.Count)
         {
             // körs om du har fler personer än byggnader
-            for (int i = people.Count - 1; i >= buildings.Count; i--) Console.WriteLine(i+1 + ") " + people[i] + " - \u001b[38;5;208mbuilding\u001b[0m");
+            for (int i = people.Count - 1; i >= buildings.Count; i--) Console.WriteLine("\u001b[38;5;208mbuilding\u001b[0m - " + people[i]);
             // körs för de personer so  har en byggnad
-            for (int i = buildings.Count - 1; i >= 0; i--) Console.WriteLine(i+1 + ") " + people[i] + " - " + buildings[i].name);
+            for (int i = buildings.Count - 1; i >= 0; i--) Console.WriteLine(i+1 + ") " + buildings[i].name + " - " + people[i]);
         }
         else
         {
             // om du har fler byggander än personer
             for (int i = buildings.Count - 1; i >= people.Count; i--) Console.WriteLine(i+1 + ") [empty] - " + buildings[i].name);
             // körs för de byggnader som har personer
-            for (int i = people.Count - 1; i >= 0; i--) Console.WriteLine(i+1 + ") " + people[i] + " - " + buildings[i].name);
+            for (int i = people.Count - 1; i >= 0; i--) Console.WriteLine(i+1 + ") " + buildings[i].name + " - " + people[i]);
         }
     }
 
@@ -92,7 +92,7 @@ public class Toolbox
         string input = Console.ReadLine();
         int inputInt;
         // sätter in det skrivna numret i input
-        bool success = int.TryParse(input, out inputInt);
+        int.TryParse(input, out inputInt);
         if (input == "g")
         {
             Console.Clear();
@@ -119,15 +119,20 @@ public class Toolbox
             return false;
         }
         // byter plats på byggnader i staden
-        else if (buildings.Count > inputInt && success)
+        else if (buildings.Count >= inputInt && inputInt > 0)
         {
             int secondInput;
             Console.WriteLine("Enter the number left to the building you want to switch it with");
             int.TryParse(Console.ReadLine(), out secondInput);
-            secondInput--;
-            Building temp = buildings[inputInt];
-            buildings[inputInt] = buildings[secondInput];
-            buildings[secondInput] = temp;
+            if (buildings.Count >= secondInput && secondInput > 0)
+            {
+                // anpassar input till listorna
+                inputInt--;
+                secondInput--;
+                Building temp = buildings[inputInt];
+                buildings[inputInt] = buildings[secondInput];
+                buildings[secondInput] = temp;
+            }
             return false;
         }
         // om spelarens input korresponderar till en av byggvalen börjar staden bygga den byggnaden
