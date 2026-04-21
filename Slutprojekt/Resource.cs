@@ -10,4 +10,5 @@ public class Resource
     public static Resource stone = new Resource() { name = "Stone" };
     public static Resource ore = new Resource() { name = "Ore" };
     public static Resource metal = new Resource() { name = "Metal" };
+    public static Resource power = new Resource() { name = "Power" };
 }

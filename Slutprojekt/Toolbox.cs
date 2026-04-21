@@ -47,10 +47,11 @@ public class Toolbox
 
 
     // skriver upp resurserna
-    public static void DisplayResources(List<Resource> resources, List<string> people, int day)
+    public static void DisplayResources(List<Resource> resources, List<string> people, int day, List<Building> buildingOptions)
     {
         Console.WriteLine("Day " + day);
         Console.WriteLine("Food needed until next person: " + people.Count * people.Count);
+        Console.WriteLine("Science needed until next technology: " + buildingOptions.Count * buildingOptions.Count * 20);
         // skriver upp alla resurser spelaren kan producera
         for (int iteration = 0; iteration < resources.Count; iteration++)
         {
@@ -71,14 +72,14 @@ public class Toolbox
             // körs om du har fler personer än byggnader
             for (int i = people.Count - 1; i >= buildings.Count; i--) Console.WriteLine("\u001b[38;5;208mbuilding\u001b[0m - " + people[i]);
             // körs för de personer so  har en byggnad
-            for (int i = buildings.Count - 1; i >= 0; i--) Console.WriteLine(i+1 + ") " + buildings[i].name + " - " + people[i]);
+            for (int i = buildings.Count - 1; i >= 0; i--) Console.WriteLine(i + 1 + ") " + buildings[i].name + " - " + people[i]);
         }
         else
         {
             // om du har fler byggander än personer
-            for (int i = buildings.Count - 1; i >= people.Count; i--) Console.WriteLine(i+1 + ") [empty] - " + buildings[i].name);
+            for (int i = buildings.Count - 1; i >= people.Count; i--) Console.WriteLine(i + 1 + ") " + buildings[i].name + " - [empty]");
             // körs för de byggnader som har personer
-            for (int i = people.Count - 1; i >= 0; i--) Console.WriteLine(i+1 + ") " + buildings[i].name + " - " + people[i]);
+            for (int i = people.Count - 1; i >= 0; i--) Console.WriteLine(i + 1 + ") " + buildings[i].name + " - " + people[i]);
         }
     }
 
@@ -86,7 +87,7 @@ public class Toolbox
 
 
 
-    // byter plats på vald byggnad och byggnaden under konstruktion, om spelaren skrev in input som inte korresponderar med en byggnad går vi över till nästa dag
+    // läser in spelarens input
     public static bool ReadInput(List<Building> buildingOptions, List<string> graveyard, List<Building> buildings)
     {
         string input = Console.ReadLine();
@@ -95,48 +96,23 @@ public class Toolbox
         int.TryParse(input, out inputInt);
         if (input == "g")
         {
-            Console.Clear();
-            // skriver ut kyrkogården
-            Console.WriteLine("In memory of:");
-            for (int i = 0; i < graveyard.Count; i++) Console.WriteLine(graveyard[i]);
-            Console.WriteLine("\nPress enter to go back");
-            Console.ReadLine();
+            DisplayGraveyard(graveyard);
             return false;
         }
         else if (input == "h")
         {
             Console.Clear();
             DisplayBuildingOptions(buildingOptions);
-            int secondInput;
-            Console.WriteLine("Enter the number left to the building you want to start building");
-            int.TryParse(Console.ReadLine(), out secondInput);
-            if (buildingOptions.Count > secondInput && secondInput > 0)
-            {
-                Building temp = buildingOptions[secondInput];
-                buildingOptions[secondInput] = buildingOptions[0];
-                buildingOptions[0] = temp;
-            }
+            SwitchCurrentlyBuilding(buildingOptions);
             return false;
         }
         // byter plats på byggnader i staden
         else if (buildings.Count >= inputInt && inputInt > 0)
         {
-            int secondInput;
-            Console.WriteLine("Enter the number left to the building you want to switch it with");
-            int.TryParse(Console.ReadLine(), out secondInput);
-            if (buildings.Count >= secondInput && secondInput > 0)
-            {
-                // anpassar input till listorna
-                inputInt--;
-                secondInput--;
-                Building temp = buildings[inputInt];
-                buildings[inputInt] = buildings[secondInput];
-                buildings[secondInput] = temp;
-            }
+            SwitchWork(buildings, inputInt);
             return false;
         }
-        // om spelarens input korresponderar till en av byggvalen börjar staden bygga den byggnaden
-        // om inputen inte korresponderar till en byggnad tolkas detta som en pass
+        // om spelarens input korresponderar till något går spelet till nästa dag
         else return true;
     }
 
@@ -144,6 +120,60 @@ public class Toolbox
 
 
 
+    public static void DisplayGraveyard(List<string> graveyard)
+    {
+        Console.Clear();
+        // skriver ut kyrkogården
+        Console.WriteLine("In memory of:");
+        for (int i = 0; i < graveyard.Count; i++) Console.WriteLine(graveyard[i]);
+        Console.WriteLine("\nPress enter to go back");
+        Console.ReadLine();
+    }
+
+
+
+
+
+    public static void SwitchCurrentlyBuilding(List<Building> buildingOptions)
+    {
+        int secondInput;
+        Console.WriteLine("Enter the number left to the building you want to start building");
+        int.TryParse(Console.ReadLine(), out secondInput);
+        if (buildingOptions.Count > secondInput && secondInput > 0)
+        {
+            Building temp = buildingOptions[secondInput];
+            buildingOptions[secondInput] = buildingOptions[0];
+            buildingOptions[0] = temp;
+        }
+    }
+
+
+
+
+
+    public static void SwitchWork(List<Building> buildings, int inputInt)
+    {
+        int secondInput;
+        Console.WriteLine("Enter the number left to the building you want to switch it with");
+        int.TryParse(Console.ReadLine(), out secondInput);
+        if (buildings.Count >= secondInput && secondInput > 0)
+        {
+            // anpassar input till listorna
+            inputInt--;
+            secondInput--;
+
+            // byter plats på valda byggnader
+            Building temp = buildings[inputInt];
+            buildings[inputInt] = buildings[secondInput];
+            buildings[secondInput] = temp;
+        }
+    }
+
+
+
+
+
+    // producerar resurser
     public static void Produce(List<Resource> resources, List<Building> buildings, List<string> people)
     {
         // loop som går genom varje byggnad
@@ -170,15 +200,14 @@ public class Toolbox
 
 
 
-
+    // ökar population om det finns tillräckligt med mat
     public static void PopulationGrowth(Resource food, List<string> people, int day)
     {
-        // ökar population
         if (food.amount >= people.Count * people.Count)
         {
             food.amount = 0;
             Console.Clear();
-            Console.WriteLine("congratulations, a new member of your city has appeared!");
+            Console.WriteLine("Congratulations! A new member of your city has appeared!");
             AddPerson(people, day);
         }
     }
@@ -220,10 +249,11 @@ public class Toolbox
 
     public static void Research(List<Building> technologies, List<Building> buildingOptions, Resource science, List<Resource> resources)
     {
+        // skapar en tom lista som ska lagra alla valbara teknologier
         List<Building> techOptions = [];
         Console.Clear();
-        Console.WriteLine("Congartualions your city discovered a new technology!");
-        // loopen körs en gång för varje tech spelaren ska kunna forska
+        Console.WriteLine("Congratualations! Your city discovered a new technology!");
+        // loopen körs en gång för varje tech spelaren ska kunna välja
         for (int i = 0; i < 3; i++)
         {
             int random = Random.Shared.Next(technologies.Count);
@@ -261,7 +291,7 @@ public class Toolbox
                 {
                     break;
                 }
-                // om resursen inte finns läggs den till i resurser
+                // om programmet har kollat alla resurser i "resources" utan att hitta den nya resursen, läggs den till i "resources"
                 else if (i == resources.Count - 1)
                 {
                     resources.Add(item.Key);
@@ -345,15 +375,21 @@ public class Toolbox
     public static List<List<Building>> GenerateTechnologyTree()
     {
         // teknologier, det ska kunna försvinna byggnader från dessa, därav måste de vara listor istället för arrayer
-        List<Building> technologies0 = [Building.library, Building.quarry, Building.quarry, Building.sawmill];
-        List<Building> technologies1 = [Building.bigFarm, Building.library, Building.quarry, Building.badMine];
-        List<Building> technologies2 = [Building.bigFarm, Building.bigFarm, Building.badMine, Building.goodMine, Building.forge];
+        List<Building> technologies0 = [Building.library, Building.quarry, Building.sawmill, Building.badMine];
+        List<Building> technologies1 = [Building.bigFarm, Building.quarry, Building.badMine, Building.sawmill];
+        List<Building> technologies2 = [Building.bigFarm, Building.badMine, Building.goodMine, Building.forge, Building.quarry];
+        List<Building> technologies3 = [Building.forge, Building.engine, Building.bigFarm, Building.goodMine];
+        List<Building> technologies4 = [Building.forge, Building.engine, Building.factory];
+        List<Building> technologies5 = [Building.particleAccelerator, Building.engine, Building.factory];
 
         // skappar ett teknologiträd och lägger in alla teknologier
         List<List<Building>> technologytree = [];
         technologytree.Add(technologies0);
         technologytree.Add(technologies1);
         technologytree.Add(technologies2);
+        technologytree.Add(technologies3);
+        technologytree.Add(technologies4);
+        technologytree.Add(technologies5);
         return technologytree;
     }
 
@@ -399,10 +435,10 @@ public class Toolbox
     {
         Produce(resources, buildings, people);
         BuildingWork(people, buildings, buildingOptions);
-        PopulationGrowth(Resource.food, people, day);
         KillPeople(people, graveyard, day);
-        // om spelaren har tillräckligt med forskning får de välja mellan 2 nya teknologier
-        if (Resource.science.amount >= 50)
+        PopulationGrowth(Resource.food, people, day);
+        // om spelaren har 30 gånger mer forskning än teknologier får de välja mellan 3 nya teknologier
+        if (Resource.science.amount >= buildingOptions.Count * buildingOptions.Count * 20)
         {
             for (int i = 0; i < technologyTree.Count; i++)
             {

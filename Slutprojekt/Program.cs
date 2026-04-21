@@ -26,7 +26,7 @@ while (true)
     Console.WriteLine($"Currently \u001b[38;5;208mbuilding\u001b[0m: {buildingOptions[0].name} ({buildingOptions[0].progress}/{buildingOptions[0].costAmount} {buildingOptions[0].costResource.name})");
 
     Console.WriteLine();
-    Toolbox.DisplayResources(resources, people, day);
+    Toolbox.DisplayResources(resources, people, day, buildingOptions);
 
     Console.WriteLine();
     Toolbox.DisplayWork(people, buildings);
