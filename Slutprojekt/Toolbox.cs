@@ -334,18 +334,10 @@ public class Toolbox
             Console.WriteLine("name must be at least 1 character");
             return false;
         }
-        if (name.Length > 50)
+        else if (name.Length > 50)
         {
             Console.WriteLine("name must be at most 50 characters");
             return false;
-        }
-        foreach (string item in names)
-        {
-            if (name == item)
-            {
-                Console.WriteLine("name can not be the same as another person");
-                return false;
-            }
         }
         return true;
     }
@@ -378,7 +370,7 @@ public class Toolbox
         List<Building> technologies0 = [Building.library, Building.quarry, Building.sawmill, Building.badMine];
         List<Building> technologies1 = [Building.bigFarm, Building.quarry, Building.badMine, Building.sawmill];
         List<Building> technologies2 = [Building.bigFarm, Building.badMine, Building.goodMine, Building.forge, Building.quarry];
-        List<Building> technologies3 = [Building.forge, Building.engine, Building.bigFarm, Building.goodMine];
+        List<Building> technologies3 = [Building.forge, Building.engine, Building.bigFarm, Building.goodMine, Building.quarry];
         List<Building> technologies4 = [Building.forge, Building.engine, Building.factory];
         List<Building> technologies5 = [Building.particleAccelerator, Building.engine, Building.factory];
 
@@ -391,6 +383,45 @@ public class Toolbox
         technologytree.Add(technologies4);
         technologytree.Add(technologies5);
         return technologytree;
+    }
+
+
+
+
+
+
+    public static List<List<Building>> GenerateTechnologyTreeNew()
+    {
+        // teknologier, det ska kunna försvinna byggnader från dessa, därav måste de vara listor istället för arrayer
+        List<Building> technologies0 = [];
+        List<Building> technologies1 = [];
+        List<Building> technologies2 = [];
+        List<Building> technologies3 = [];
+        List<Building> technologies4 = [];
+        List<Building> technologies5 = [];
+
+        // skappar ett teknologiträd och lägger in alla teknologier
+        List<List<Building>> technologytree = [];
+        technologytree.Add(technologies0);
+        technologytree.Add(technologies1);
+        technologytree.Add(technologies2);
+        technologytree.Add(technologies3);
+        technologytree.Add(technologies4);
+        technologytree.Add(technologies5);
+
+        // lägger yill byggnader i teknologilistorna med hjälp av for loopar
+        for (int i = 0; i < 4; i++) technologytree[i].Add(Building.quarry);
+        for (int i = 0; i < 3; i++) technologytree[i].Add(Building.bigFarm);
+        for (int i = 0; i < 2; i++) technologytree[i].Add(Building.sawmill);
+        for (int i = 0; i < 1; i++) technologytree[i].Add(Building.library);
+        for (int i = 1; i < 4; i++) technologytree[i].Add(Building.badMine);
+        for (int i = 0; i < 4; i++) technologytree[i].Add(Building.goodMine);
+        for (int i = 0; i < 4; i++) technologytree[i].Add(Building.forge);
+        for (int i = 0; i < 4; i++) technologytree[i].Add(Building.engine);
+        for (int i = 0; i < 4; i++) technologytree[i].Add(Building.factory);
+        for (int i = 5; i < 6; i++) technologytree[i].Add(Building.particleAccelerator);
+
+        return technologytree;    
     }
 
 

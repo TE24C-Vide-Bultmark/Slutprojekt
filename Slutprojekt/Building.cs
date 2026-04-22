@@ -10,7 +10,7 @@ public class Building
     public static Building farm = new Building() { name = "Farm", costResource = Resource.wood, production = new() { { Resource.food, 3 } } };
     public static Building carpentry = new Building() { name = "Carpentry", costAmount = 5, costResource = Resource.wood, production = new() { { Resource.wood, 1 } } };
     public static Building bigFarm = new Building() { name = "Big Farm", costAmount = 30, costResource = Resource.stone, production = new() { { Resource.food, 10 } } };
-    public static Building library = new Building() { name = "Library", costAmount = 3, costResource = Resource.wood, production = new() { { Resource.science, 1 } } };
+    public static Building library = new Building() { name = "Library", costAmount = 3, costResource = Resource.wood, production = new() { { Resource.science, 5 } } };
     public static Building quarry = new Building() { name = "Quarry", costAmount = 15, costResource = Resource.wood, production = new() { { Resource.stone, 1 } } };
     public static Building sawmill = new Building() { name = "Sawmill", costAmount = 10, costResource = Resource.wood, production = new() { { Resource.wood, 2 } } };
     public static Building badMine = new Building() { name = "Bad Mine", costAmount = 40, costResource = Resource.wood, production = new() { { Resource.ore, 1 } } };
