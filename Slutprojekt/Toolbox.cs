@@ -39,7 +39,6 @@ public class Toolbox
             // skriver upp byggnadens plats, namn, progress, kostnad och vilken resurs den kostar
             Console.WriteLine($"{iteration}) {buildingOptions[iteration].name} ({buildingOptions[iteration].progress}/{buildingOptions[iteration].costAmount} {buildingOptions[iteration].costResource.name})");
         }
-
     }
 
 
@@ -384,65 +383,10 @@ public class Toolbox
         technologytree.Add(technologies5);
         return technologytree;
     }
+    
 
 
 
-
-
-
-    public static List<List<Building>> GenerateTechnologyTreeNew()
-    {
-        // teknologier, det ska kunna försvinna byggnader från dessa, därav måste de vara listor istället för arrayer
-        List<Building> technologies0 = [];
-        List<Building> technologies1 = [];
-        List<Building> technologies2 = [];
-        List<Building> technologies3 = [];
-        List<Building> technologies4 = [];
-        List<Building> technologies5 = [];
-
-        // skappar ett teknologiträd och lägger in alla teknologier
-        List<List<Building>> technologytree = [];
-        technologytree.Add(technologies0);
-        technologytree.Add(technologies1);
-        technologytree.Add(technologies2);
-        technologytree.Add(technologies3);
-        technologytree.Add(technologies4);
-        technologytree.Add(technologies5);
-
-        // lägger yill byggnader i teknologilistorna med hjälp av for loopar
-        for (int i = 0; i < 4; i++) technologytree[i].Add(Building.quarry);
-        for (int i = 0; i < 3; i++) technologytree[i].Add(Building.bigFarm);
-        for (int i = 0; i < 2; i++) technologytree[i].Add(Building.sawmill);
-        for (int i = 0; i < 1; i++) technologytree[i].Add(Building.library);
-        for (int i = 1; i < 4; i++) technologytree[i].Add(Building.badMine);
-        for (int i = 0; i < 4; i++) technologytree[i].Add(Building.goodMine);
-        for (int i = 0; i < 4; i++) technologytree[i].Add(Building.forge);
-        for (int i = 0; i < 4; i++) technologytree[i].Add(Building.engine);
-        for (int i = 0; i < 4; i++) technologytree[i].Add(Building.factory);
-        for (int i = 5; i < 6; i++) technologytree[i].Add(Building.particleAccelerator);
-
-        return technologytree;    
-    }
-
-
-
-
-
-    // tillåter spelaren att byta plats på byggnader
-    public static void ChangeLayout(List<Building> buildings)
-    {
-        Console.WriteLine("select which building to switch");
-        int building1;
-        bool success = int.TryParse(Console.ReadLine(), out building1);
-        Console.WriteLine("select which building to switch it with");
-        int building2;
-        success = int.TryParse(Console.ReadLine(), out building2);
-
-        // bytter plats på de tvp valda byggnaderna
-        Building temp = buildings[building1];
-        buildings[building1] = buildings[building2];
-        buildings[building1] = temp;
-    }
 
     public static void KillPeople(List<string> people, List<string> graveyard, int day)
     {
@@ -458,6 +402,7 @@ public class Toolbox
             }
         }
     }
+
 
 
 

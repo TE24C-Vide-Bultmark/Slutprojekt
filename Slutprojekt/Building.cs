@@ -17,7 +17,7 @@ public class Building
     public static Building goodMine = new Building() { name = "Good Mine", costAmount = 15, costResource = Resource.stone, production = new() { { Resource.ore, 1 }, { Resource.stone, 1 } } };
     public static Building forge = new Building() { name = "Forge", costAmount = 25, costResource = Resource.stone, production = new() { {Resource.wood, -1 }, { Resource.ore, -1 }, { Resource.metal, 1 } } };
     public static Building engine = new Building() { name = "Engine", costAmount = 50, costResource = Resource.metal, production = new() { { Resource.wood, -3}, { Resource.power, 1} } };
-    public static Building factory = new Building() { name = "Factory", costAmount = 100, costResource = Resource.metal, production = new() { { Resource.power, -3}, { Resource.ore, -10}, { Resource.metal, 10} } };
+    public static Building factory = new Building() { name = "Factory", costAmount = 100, costResource = Resource.metal, production = new() { { Resource.power, -3}, { Resource.ore, -3}, { Resource.metal, 5} } };
     public static Building particleAccelerator = new Building() { name = "Particle Accelerator", costAmount = 1000, costResource = Resource.metal, production = new() { { Resource.power, -100}, { Resource.science, (int)((float)Math.PI*1000000)} } };
     
 }
