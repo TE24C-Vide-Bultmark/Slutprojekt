@@ -119,11 +119,12 @@ public class Toolbox
 
 
 
+    // visar kyrkogården RIP
     public static void DisplayGraveyard(List<string> graveyard)
     {
         Console.Clear();
         // skriver ut kyrkogården
-        Console.WriteLine("In memory of:");
+        Console.WriteLine("In loving memory of:");
         for (int i = 0; i < graveyard.Count; i++) Console.WriteLine(graveyard[i]);
         Console.WriteLine("\nPress enter to go back");
         Console.ReadLine();
@@ -133,6 +134,7 @@ public class Toolbox
 
 
 
+    // låter splearen ändra på vad staden bygger
     public static void SwitchCurrentlyBuilding(List<Building> buildingOptions)
     {
         int secondInput;
@@ -150,6 +152,7 @@ public class Toolbox
 
 
 
+    // byter plats på byggnader i staden
     public static void SwitchWork(List<Building> buildings, int inputInt)
     {
         int secondInput;
@@ -215,6 +218,7 @@ public class Toolbox
 
 
 
+    // bygger nya byggnader
     public static void BuildingWork(List<string> people, List<Building> buildings, List<Building> buildingOptions)
     {
         // kollar om har personer som bygger
@@ -246,6 +250,7 @@ public class Toolbox
 
 
 
+    // låter spelaren forska nya teknologier
     public static void Research(List<Building> technologies, List<Building> buildingOptions, Resource science, List<Resource> resources)
     {
         // skapar en tom lista som ska lagra alla valbara teknologier
@@ -363,6 +368,7 @@ public class Toolbox
 
 
 
+    // generarar ett teknolgi "träd"
     public static List<List<Building>> GenerateTechnologyTree()
     {
         // teknologier, det ska kunna försvinna byggnader från dessa, därav måste de vara listor istället för arrayer
@@ -388,6 +394,7 @@ public class Toolbox
 
 
 
+    // en chans att döda en person
     public static void KillPeople(List<string> people, List<string> graveyard, int day)
     {
         // loopen går igenom alla personer i din stad
@@ -407,6 +414,7 @@ public class Toolbox
 
 
 
+    // metod som ordnar en ny dag 
     public static void NewDay(int day, List<Resource> resources, List<Building> buildings, List<string> people, List<Building> buildingOptions, List<string> graveyard, List<List<Building>> technologyTree)
     {
         Produce(resources, buildings, people);
