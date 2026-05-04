@@ -1,5 +1,7 @@
 // orange colored "building" ANSI code: \u001b[38;5;208mbuilding\u001b[0m
 
+using Microsoft.VisualBasic;
+
 public class Toolbox
 {
     // introducerar spelet och låter spelaren namnge staden samt lägger till de första människorna
@@ -105,6 +107,12 @@ public class Toolbox
             SwitchCurrentlyBuilding(buildingOptions);
             return false;
         }
+        else if (input == "i")
+        {
+            Console.Clear();
+            Instructions();
+            return false;
+        }
         // byter plats på byggnader i staden
         else if (buildings.Count >= inputInt && inputInt > 0)
         {
@@ -113,6 +121,35 @@ public class Toolbox
         }
         // om spelarens input korresponderar till något går spelet till nästa dag
         else return true;
+    }
+
+
+
+
+
+    // metod som skriver ut instruktioner
+    public static void Instructions()
+    {
+        Console.WriteLine("Dont worry about how to win, this is a sandbox game\n");
+
+        Console.WriteLine("Read the screen closely for the various information, like resources and how much you need for new events to occur\n");
+
+        Console.WriteLine("Food is how you get new people to appear, make sure that about half the population is working on farms");
+        Console.WriteLine("You can see what you city is building by looking at currently \u001b[38;5;208mbuilding\u001b[0m\n");
+
+        Console.WriteLine("When you want to build new buildings, press h");
+        Console.WriteLine("You will see a list of building options");
+        Console.WriteLine("Write the number next to the building you want to build to build it\n");
+
+        Console.WriteLine("When you get enough science, you will get 3 technologies to choose from");
+        Console.WriteLine("Simply write the number left to the technolgy you want to research");
+        Console.WriteLine("Wonder what a building does? research it and build it to see!\n");
+
+        Console.WriteLine("The people in your city will die from time to time");
+        Console.WriteLine("But you can honor their memory by going to the graveyard by writing g\n");
+
+        Console.WriteLine("Press Enter to keep playing");
+        Console.ReadLine();
     }
 
 
@@ -138,7 +175,7 @@ public class Toolbox
     public static void SwitchCurrentlyBuilding(List<Building> buildingOptions)
     {
         int secondInput;
-        Console.WriteLine("Enter the number left to the building you want to start building");
+        Console.WriteLine("\nEnter the number left to the building you want to start building");
         int.TryParse(Console.ReadLine(), out secondInput);
         if (buildingOptions.Count > secondInput && secondInput > 0)
         {
@@ -265,6 +302,8 @@ public class Toolbox
             technologies.RemoveAt(random);
             Console.WriteLine(i + 1 + ") " + techOptions[i].name);
         }
+        Console.WriteLine("\n");
+        DisplayBuildingOptions(buildingOptions);
         int choice = 0;
         while (choice < 1 || choice > techOptions.Count)
         {
@@ -389,7 +428,7 @@ public class Toolbox
         technologytree.Add(technologies5);
         return technologytree;
     }
-    
+
 
 
 

@@ -4,7 +4,7 @@ public class Resource
     public int amount = 0;
 
     // resurserna i spelet
-    public static Resource food = new() { name = "food" };
+    public static Resource food = new() { name = "Food" };
     public static Resource wood = new Resource() { name = "Wood" };
     public static Resource science = new Resource() { name = "Science" };
     public static Resource stone = new Resource() { name = "Stone" };

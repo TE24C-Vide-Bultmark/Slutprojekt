@@ -34,7 +34,8 @@ while (true)
     Console.WriteLine("\n--------------------------------------------------------------------------------");
     Console.WriteLine("enter the number to the left of the building you want to switch");
     Console.WriteLine("g - show graveyard");
-    Console.WriteLine("h - change currently building");
+    Console.WriteLine("h - change currently \u001b[38;5;208mbuilding\u001b[0m");
+    Console.WriteLine("i - show information and help");
     Console.WriteLine("any - go to next day");
 
     // spelaren får möjlighet att byta vilken byggnad som byggs
