@@ -1,7 +1,5 @@
 // orange colored "building" ANSI code: \u001b[38;5;208mbuilding\u001b[0m
 
-using Microsoft.VisualBasic;
-
 public class Toolbox
 {
     // introducerar spelet och låter spelaren namnge staden samt lägger till de första människorna
